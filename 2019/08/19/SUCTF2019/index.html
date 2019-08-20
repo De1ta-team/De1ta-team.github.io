@@ -191,6 +191,54 @@
 <blockquote>
 <p>flag: <code>suctf{My_usb_pr0toco1_s0_w3ak}</code></p>
 </blockquote>
+<h2 id="homerouter"><a href="#homerouter" class="headerlink" title="homerouter"></a>homerouter</h2><p>先试着用binwalk提取下发的路由器固件，能看到文件：</p>
+<p><img src="https://chikorita.fun/ctf_writeup/suctf_2019/img/HOMEROUTER_3.png" alt="HOMEROUTER_3.png"></p>
+<p>这个时候能看到有个那么不常见的东西：</p>
+<p><img src="https://chikorita.fun/ctf_writeup/suctf_2019/img/HOMEROUTER_4.png" alt="HOMEROUTER_4.png"></p>
+<p>能看到配置文件里有个不寻常的东西：</p>
+<p><img src="https://chikorita.fun/ctf_writeup/suctf_2019/img/HOMEROUTER_5.png" alt="HOMEROUTER_5.png"></p>
+<blockquote>
+<p>EasyCwmp is a GPLv2 open source implementation of the TR069 cwmp standard.</p>
+</blockquote>
+<p>这个时候就大概能猜想要去利用easycwmp来连接一下服务器看看会有什么。可以选择用qemu来跑固件，比较省事。还有个比较不那么靠谱的方法就是用Burp一类的工具模拟协议发包和服务器交互了。</p>
+<p>有关更多信息，可以查看这里或者Google。</p>
+<p><a href="https://www.twblogs.net/a/5b7f63712b717767c6af5969" target="_blank" rel="noopener">TR069之CPE與ACS的Digest驗證</a></p>
+<p><a href="https://blog.csdn.net/Lock_Love_/article/details/48713243" target="_blank" rel="noopener">TR-069 协议完整的通信过程</a></p>
+<p>由于这边不知道为啥qemu有点问题跑不起来，于是乎拿了一个路由器和一个软路由试了一下，下面都记录了。比赛的时候是用的一台平时折腾用的Phicomm K2，之前刷了PandoraBox，于是直接SSH上去。</p>
+<h3 id="使用PandoraBox"><a href="#使用PandoraBox" class="headerlink" title="使用PandoraBox"></a>使用PandoraBox</h3><p>由于PandoraBox有预编译的包，所以可以直接：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">opkg update</span><br><span class="line">opkg install easycwmp</span><br></pre></td></tr></table></figure>
+<p>然后编辑<code>/etc/config/easycwmp</code>里的acs相关的配置。串号随意改一个就好了。</p>
+<p>这个时候如果尝试直接跑<code>easycwmp -f -b</code>的话可能会没有反应就退出了，好像是因为这里的easycwmp自己已经启动了。只好<code>ps</code>看一下进程，然后把它<code>kill</code>掉。</p>
+<p>这个时候应该能正常用了，不过我这边没有输出，像卡住了一样，搜了一下发现应该去看syslog。于是先开着：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">logread -f</span><br></pre></td></tr></table></figure>
+<p>然后改了个串号再开<code>easycwmp -f -b</code>。如果发现日志里出现<code>Error reading ca cert file</code>的话，可以：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opkg install ca-bundle</span><br></pre></td></tr></table></figure>
+<p>然后重试上面的步骤。如果<code>/usr/share/easycwmp/functions</code>下的文件里有<code>system_set_password root</code>的话（没有的话就去把固件里的<code>/usr/share/easycwmp/functions/system</code>复制一份过来），应该能在日志里读到：（就是下发配置修改root密码）</p>
+<p><img src="https://chikorita.fun/ctf_writeup/suctf_2019/img/HOMEROUTER_6.png" alt="HOMEROUTER_6.png"></p>
+<p>最后…接下来你可能会因为接下来登录不了SSH和LuCI而怀疑人生，不要慌，因为它帮你把密码设置成了flag…</p>
+<h3 id="使用OpenWRT软路由"><a href="#使用OpenWRT软路由" class="headerlink" title="使用OpenWRT软路由"></a>使用OpenWRT软路由</h3><p>这个只要搞个虚拟机就可以跑，比较简单。没有的话可以先下载一下镜像：<a href="https://downloads.openwrt.org/snapshots/targets/x86/64/" target="_blank" rel="noopener">Index of /snapshots/targets/x86/64/</a>。（其实也可以玩玩Koolshare的LEDE）</p>
+<p>具体安装方法可以看这里：<a href="https://openwrt.org/docs/guide-user/virtualization/virtualbox-vm" target="_blank" rel="noopener">Run OpenWrt as a VirtualBox virtual machine</a>。</p>
+<p>主要就是解压，然后转盘：</p>
+<figure class="highlight bash"><figcaption><span>tab</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VBoxManage convertfromraw --format VDI openwrt-x86-64-combined-squashfs.img openwrt-x86-64-combined-squashfs.vdi</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&apos;C:\Program Files\Oracle\VirtualBox\VBoxManage.exe&apos; convertfromraw --format VDI openwrt-x86-64-combined-squashfs.img openwrt-x86-64-combined-squashfs.vdi</span><br></pre></td></tr></table></figure>
+<p>然后VirtualBox新建虚拟机，使用已存在的虚拟硬盘文件即可。启动前需要保证网卡1是仅主机（Host-only）适配器，网卡2是NAT，不然可能上不了网。（Koolshare的好像不大一样，自己看文档吧）</p>
+<p>要是启动后网络还是有问题就：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uci show network</span><br></pre></td></tr></table></figure>
+<p>看一下。可以：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">uci <span class="built_in">set</span> network.lan.ipaddr=<span class="string">'192.168.56.2'</span></span><br><span class="line">uci commit</span><br><span class="line">reboot</span><br></pre></td></tr></table></figure>
+<p>把不对的改掉。</p>
+<p>然后就可以来装easycwmp了。现在没有预编译的包了，只好自己编译。</p>
+<p><a href="https://chikorita.fun/ctf_writeup/suctf_2019/files/homerouter/x86_64/easycwmp_1.8.1_x86_64.ipk" target="_blank" rel="noopener">x86_64/easycwmp_1.8.1</a></p>
+<p><a href="https://chikorita.fun/ctf_writeup/suctf_2019/files/homerouter/x86_64/libmicroxml_2015_03_18_caa8d3e68.ipk" target="_blank" rel="noopener">x86_64/libmicroxml</a></p>
+<p><a href="https://chikorita.fun/ctf_writeup/suctf_2019/files/homerouter/i386/easycwmp_1.8.1_i386_pentium4.ipk" target="_blank" rel="noopener">i386/easycwmp_1.8.1</a></p>
+<p><a href="https://chikorita.fun/ctf_writeup/suctf_2019/files/homerouter/i386/libmicroxml_2015_03_18_caa8d3e68.ipk" target="_blank" rel="noopener">i386/libmicroxml</a></p>
+<p>这里贴一下自己编译的，可以直接下载对应架构的，然后：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opkg install xxx.ipk</span><br></pre></td></tr></table></figure>
+<p>非要自己编译的话就看着<a href="https://github.com/pivasoftware/easycwmp" target="_blank" rel="noopener">这里（pivasoftware/easycwmp）</a>的README编译吧。需要先<code>git clone https://github.com/openwrt/openwrt</code>，然后把<a href="http://easycwmp.org/download/easycwmp-openwrt-1.8.1.tar.gz" target="_blank" rel="noopener">easycwmp-openwrt</a>和<a href="http://easycwmp.org/download/libmicroxml.tar.gz" target="_blank" rel="noopener">microxml</a>的压缩包解压到<code>openwrt/package</code>下，这个时候在<code>openwrt</code>目录下执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make menuconfig</span><br></pre></td></tr></table></figure>
+<p>应该就能在Utilities里找到easycwmp了。根据自己的需要进行<code>make</code>即可。</p>
+<p>安装完成后的操作就和在PandoraBox下差不多了，就是改配置，然后读日志，再启动客户端就好了。</p>
+<p><img src="https://chikorita.fun/ctf_writeup/suctf_2019/img/HOMEROUTER_7.png" alt="HOMEROUTER_7.png"></p>
 <h1 id="RE"><a href="#RE" class="headerlink" title="RE"></a>RE</h1><h2 id="signup"><a href="#signup" class="headerlink" title="signup"></a>signup</h2><p>gmp库计算RSA</p>
 <p>直接在factordb分解N</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> inverse</span><br><span class="line">p = <span class="number">282164587459512124844245113950593348271</span></span><br><span class="line">q = <span class="number">366669102002966856876605669837014229419</span></span><br><span class="line">n = p*q</span><br><span class="line">phi = (p<span class="number">-1</span>)*(q<span class="number">-1</span>)</span><br><span class="line">e = <span class="number">65537</span></span><br><span class="line">d = inverse(e,phi)</span><br><span class="line">c = <span class="number">0xad939ff59f6e70bcbfad406f2494993757eee98b91bc244184a377520d06fc35</span></span><br><span class="line">m = pow(c,d,n)</span><br><span class="line">print(hex(m)[<span class="number">2</span>:<span class="number">-1</span>].decode(<span class="string">"hex"</span>))</span><br></pre></td></tr></table></figure>
@@ -353,7 +401,7 @@
     
         <div class="post-tags">
             <i class="fa fa-tags" aria-hidden="true"></i>
-            <a href="/tags/ctf/">#ctf</a> <a href="/tags/writeup/">#writeup</a> <a href="/tags/re/">#re</a> <a href="/tags/web/">#web</a> <a href="/tags/crypto/">#crypto</a> <a href="/tags/pwn/">#pwn</a> <a href="/tags/misc/">#misc</a> <a href="/tags/suctf/">#suctf</a>
+            <a href="/tags/ctf/">#ctf</a> <a href="/tags/re/">#re</a> <a href="/tags/web/">#web</a> <a href="/tags/crypto/">#crypto</a> <a href="/tags/pwn/">#pwn</a> <a href="/tags/misc/">#misc</a> <a href="/tags/writeup/">#writeup</a> <a href="/tags/suctf/">#suctf</a>
         </div>
     
 
