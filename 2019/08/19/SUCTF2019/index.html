@@ -2,7 +2,7 @@
 <html lang="en">
 
 <!-- Head tag -->
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,24 +20,24 @@
 
     <!--Open Graph Title-->
     
-        <meta property="og:title" content="SUCTF 2019 Writeup"/>
+        <meta property="og:title" content="SUCTF 2019 Writeup">
     
 
     <!--Open Graph Description-->
     
 
     <!--Open Graph Site Name-->
-    <meta property="og:site_name" content="De1ta"/>
+    <meta property="og:site_name" content="De1ta">
 
     <!--Type page-->
     
-        <meta property="og:type" content="article" />
+        <meta property="og:type" content="article">
     
 
     <!--Page Cover-->
     
 
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary">
     
 
     <!-- Title -->
@@ -58,7 +58,7 @@
     <![endif]-->
 
     <!-- Gallery -->
-    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/css/style.css">
@@ -175,13 +175,13 @@
 <p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20190819100803-2d7608bc-c226-1.png" alt="image.png"></p>
 <h2 id="guess-game"><a href="#guess-game" class="headerlink" title="guess_game"></a>guess_game</h2><p>一个猜数字游戏，题目提供了客户端和服务端。这个游戏有10轮，每轮猜0-10共11个数字，10轮全部猜中才出flag，直接碰撞不可能。</p>
 <p>这题主要考察对 <code>pickle</code> 序列化的了解，读懂 <code>pickle</code> 的源代码，手工构造出相应 <code>payload</code> 即可。</p>
-<p><img src="https://i.loli.net/2019/08/19/bL8AW9fvODPMBCa.png" alt=""></p>
+<p><img src="https://i.loli.net/2019/08/19/bL8AW9fvODPMBCa.png" alt></p>
 <p><code>RestrictedUnpickler.py</code> 里重写了 <code>find_class</code>，对反序列化的对象位置进行了限制，只允许 <code>guess_game</code> 下的模块，而且不允许含 <code>__</code> 的内置对象。</p>
 <p>那么可以先反序列化一个 <code>guess_game里的game对象</code>，然后再反序列化一个 <code>guess_game.Ticket里的Ticket类</code>，参数 <code>number</code> 随便赋一个值（比如6），然后将 <code>Ticket</code> 赋值给 <code>game的curr_ticket</code> 覆盖服务端随机生成的 <code>Ticket</code>，最后我们再反序列化一次最开始反序列化的 <code>Ticket</code>，参数 <code>number</code> 赋相同值。</p>
 <p>将以上反序列化过程，对照 <code>pickle</code> 源代码构造好一条语句，直接循环10次打过去，就能拿到flag。</p>
 <p>构造好的 <code>payload</code>：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ticket = b&quot;\x80\x04cguess_game\ngame\nN(S&apos;curr_ticket&apos;\ncguess_game.Ticket\nTicket\nq\x00)\x81q\x01&#125;q\x02X\x06\x00\x00\x00numberq\x03K\x06sbd\x86bcguess_game.Ticket\nTicket\nq\x00)\x81q\x01&#125;q\x02X\x06\x00\x00\x00numberq\x03K\x06sb.&quot;</span><br></pre></td></tr></table></figure>
-<p><img src="https://i.loli.net/2019/08/19/cg5eYM7XbQUuzwK.png" alt=""></p>
+<p><img src="https://i.loli.net/2019/08/19/cg5eYM7XbQUuzwK.png" alt></p>
 <p>Flag: <code>flag{cabe5968-8143-4c45-91b7-557edab2ab4d}</code></p>
 <h2 id="game"><a href="#game" class="headerlink" title="game"></a>game</h2><p>index.html里有一句话：<code>can u find my secret</code>?<br>在两个js文件里搜，找到一个图片文件名：<code>iZwz9i9xnerwj6o7h40eauZ.png</code>，下下来，用Stegsolver看一下LSB，发现有一串字符：<code>U2FsdGVkX1+zHjSBeYPtWQVSwXzcVFZLu6Qm0To/KeuHg8vKAxFrVQ==</code>，根据U2FsdGVkX1猜测是密文，试了一下，3DES，密钥是index.html中的字符串<code>ON2WG5DGPNUECSDBNBQV6RTBNMZV6RRRMFTX2===</code>的b32decode，解开可得flag</p>
 <blockquote>
@@ -479,7 +479,7 @@
                     
                     
                     <li class="list-inline-item">
-                        <a href="\#">
+                        <a href="/atom.xml">
                             <span class="footer-icon-container">
                                 <i class="fa fa-rss"></i>
                             </span>
