@@ -225,9 +225,9 @@
 <h2 id="babyunic"><a href="#babyunic" class="headerlink" title="babyunic"></a>babyunic</h2><p>使用unicorn引擎，翻一下unicorn源码可以得知几个函数及参数的意思</p>
 <p><a href="https://github.com/unicorn-engine/unicorn/blob/master/include/unicorn/unicorn.h" target="_blank" rel="noopener">https://github.com/unicorn-engine/unicorn/blob/master/include/unicorn/unicorn.h</a></p>
 <p><a href="https://github.com/unicorn-engine/unicorn/blob/master/include/unicorn/mips.h" target="_blank" rel="noopener">https://github.com/unicorn-engine/unicorn/blob/master/include/unicorn/mips.h</a></p>
-<p>可以得知架构是mips，小端序</p>
+<p>可以得知架构是mips，大端序</p>
 <p>输入的flag与结果分别被写到两个地址，分别作为指针通过a0和a1传入，然后设置了fp和sp的值。代码写到另一个地址，然后开始执行。最后从结果处读数据与常量对比。</p>
-<p>ida自带有mips小端序处理器模块，使用retdec插件可以反编译，但是效果不是很好。</p>
+<p>ida自带有mips大端序处理器模块，使用retdec插件可以反编译，但是效果不是很好。</p>
 <p>不过代码逻辑特别简单，很容易能看懂。</p>
 <p>先是循环左移三位，然后异或下标，最后互相加减计算出42个结果。</p>
 <p>因此只需解42元方程组。</p>
@@ -353,7 +353,7 @@
     
         <div class="post-tags">
             <i class="fa fa-tags" aria-hidden="true"></i>
-            <a href="/tags/ctf/">#ctf</a> <a href="/tags/re/">#re</a> <a href="/tags/web/">#web</a> <a href="/tags/crypto/">#crypto</a> <a href="/tags/pwn/">#pwn</a> <a href="/tags/misc/">#misc</a> <a href="/tags/writeup/">#writeup</a> <a href="/tags/suctf/">#suctf</a>
+            <a href="/tags/ctf/">#ctf</a> <a href="/tags/writeup/">#writeup</a> <a href="/tags/re/">#re</a> <a href="/tags/web/">#web</a> <a href="/tags/crypto/">#crypto</a> <a href="/tags/pwn/">#pwn</a> <a href="/tags/misc/">#misc</a> <a href="/tags/suctf/">#suctf</a>
         </div>
     
 
