@@ -291,11 +291,11 @@
 <h2 id="ez-mem-amp-usb"><a href="#ez-mem-amp-usb" class="headerlink" title="ez_mem&amp;usb"></a>ez_mem&amp;usb</h2><p>流量包打开之后发现有两个上传data.zip的流量，把zip提取出来后，发现两个是相同的文件。任取一个解压，是一个vmem内存镜像文件，用volatility解析，发现内存中有文件\Device\HarddiskVolume1\Documents and Settings\Administrator\flag.img，提取出来，发现有密码。继续用volatility分析进程，发现有个cmd进程，用cmdscan插件查看命令，得到压缩包密码<code>weak_auth_top100</code>,解压出一个usbdata.txt文件，常规套路解析usb流量可得flag:FLAG[69200835784EC3ED8D2A64E73FE913C0]，大写转小写，[]转{}即可。</p>
 <h2 id="Misc-隐藏的信息"><a href="#Misc-隐藏的信息" class="headerlink" title="Misc-隐藏的信息"></a>Misc-隐藏的信息</h2><p>二维码反色之后补全是假的信息</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;this_is_also_not_flag&#125;</span><br><span class="line">解压密码不在这里0.0！</span><br></pre></td></tr></table></figure>
-<p>ZIP是伪加密，解密的WAV文件包含一些DTMF信息<br><img src="https://uploader.shimo.im/f/1RhOY4piV2IMJf0J.png!thumbnail" alt><br><img src="https://uploader.shimo.im/f/bmEaKmggITAvvFM4.png!thumbnail" alt></p>
+<p>ZIP是伪加密，解密的WAV文件包含一些DTMF信息<br><img src="https://i.loli.net/2020/03/10/rBm7FbIcnCgHvQk.png" alt="image.png"><br><img src="https://i.loli.net/2020/03/10/Zuj1AOhi3lPzB5I.png" alt="image.png"></p>
 <p>对照下图还原信息：187485618521</p>
-<p><img src="https://uploader.shimo.im/f/mGAS03RePwwri8RF.png!thumbnail" alt></p>
+<p><img src="https://i.loli.net/2020/03/10/KhVFBnIp8uqTclw.png" alt="image.png"></p>
 <p>strings了一下原来二维码的图片，发现提示用base64来getflag</p>
-<p><img src="https://uploader.shimo.im/f/voeG1JQPcO0qgfEM.png!thumbnail" alt></p>
+<p><img src="https://i.loli.net/2020/03/10/PZ2IrtoagE8pSdj.png" alt="image.png"></p>
 <p>最后flag就是flag{MTg3NDg1NjE4NTIx}</p>
 <h2 id="武汉加油"><a href="#武汉加油" class="headerlink" title="武汉加油"></a>武汉加油</h2><p>给了一张图片 </p>
 <p>后面padding了一个rar文件</p>
