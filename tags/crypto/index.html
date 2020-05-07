@@ -4,7 +4,7 @@
 <!-- Head tag -->
 <head><meta name="generator" content="Hexo 3.9.0">
 
-    <meta charset="utf-8">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -61,7 +61,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/css/style.css">
 
-    <!-- Google Analytics -->
+    <!-- Google Analytics --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
     
 
 
@@ -70,7 +70,7 @@
 
 <body>
 
-<div class="bg-gradient"></div>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="bg-gradient"></div>
 <div class="bg-pattern"></div>
 
 <!-- Menu -->
@@ -144,6 +144,15 @@
 </header>
 
         <section class="main archive-container">
+            
+                <div class="archive-post">
+    <a href="/2020/05/06/de1ctf2020 Writeup/">
+        <span class="archive-date">
+            May 2020
+        </span>
+        XCTF De1CTF 2020 Writeup
+    </a>
+</div>
             
                 <div class="archive-post">
     <a href="/2020/03/10/XCTF<ZHANYI>-2020/">
@@ -263,15 +272,15 @@
             </li>
             
             <li>
+                <a class="footer-post" href="/2020/05/06/de1ctf2020 Writeup/">XCTF De1CTF 2020 Writeup</a>
+            </li>
+            
+            <li>
                 <a class="footer-post" href="/2020/03/10/XCTF<ZHANYI>-2020/">XCTF战疫 2020 Writeup</a>
             </li>
             
             <li>
                 <a class="footer-post" href="/2019/08/19/SUCTF2019/">SUCTF 2019 Writeup</a>
-            </li>
-            
-            <li>
-                <a class="footer-post" href="/2019/08/08/de1ctf2019 Writeup/">De1ctf 2019 Writeup</a>
             </li>
             
         </ul>
@@ -341,6 +350,21 @@
 
 
 
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>
